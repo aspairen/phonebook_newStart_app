@@ -33,6 +33,19 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
 
+///get a single person
+app.get('/api/persons/:id', (request, response) => {
+  const id = request.params.id
+  const person = persons.find(person => person.id === id)
+
+  if (person) {
+    response.json(person)
+  } else {
+    response.status(404).end()
+    console.error(error)
+  }
+
+})
 //info route
 app.get('/info', (req, res) => {
   res.send(`<p>Phonebook has info for 2 people</p><br><p>${Date()}</p>`)
