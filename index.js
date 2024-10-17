@@ -28,6 +28,10 @@ let persons = [
 app.get('/', (request, response) => {
   response.send('<h1>Welcome to the Phonebook App</h1>')
 })
+//info route
+app.get('/info', (req, res) => {
+  res.send(`<p>Phonebook has info for 2 people</p><br><p>${Date()}</p>`)
+})
 //gets all persons
 app.get('/api/persons', (request, response) => {
   response.json(persons)
@@ -42,13 +46,16 @@ app.get('/api/persons/:id', (request, response) => {
     response.json(person)
   } else {
     response.status(404).end()
-    console.error(error)
+    console.log(error)
   }
 
 })
-//info route
-app.get('/info', (req, res) => {
-  res.send(`<p>Phonebook has info for 2 people</p><br><p>${Date()}</p>`)
+//delete
+app.delete('/api/persons/:id', (request, response) => {
+  const id = request.params.id
+  persons = persons.filter(person => person.id !== id)
+
+  response.status(204).end()
 })
 const PORT = 3001
 app.listen(PORT, () => {
