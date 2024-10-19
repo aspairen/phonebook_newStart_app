@@ -60,6 +60,24 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 app.post('/api/persons', (request, response) => {
+  const body = request.body
+  // Check for missing name or number
+  if (!body.name) {
+    return response.status(400).json({
+      error: 'name missing'
+    })
+  } else if (!body.number) {
+    return response.status(400).json({
+      error: 'number missing'
+    })
+  };
+
+  // Check for existing name
+  const existingPerson = persons.find(person => person.name === body.name);
+  if (existingPerson) {
+    return response.status(409).json({ error: 'name must be unique' })
+  }
+
   function GenerateRandomId() {
     return Math.random().toString(36).substring(2, 9);
 }
@@ -67,14 +85,14 @@ app.post('/api/persons', (request, response) => {
   console.log(uniqueId);
 
 
-  const person = request.body
-  person.id = String(uniqueId)
+  const newPerson = { ...body, id: uniqueId }
+  
 
-  //Combining the new person to persons
-  persons = persons.concat(person)
+  // Add new person to persons array
+  persons = persons.concat(newPerson)
 
-  console.log(person)
-  response.json(person)
+  console.log(newPerson)
+  response.json(newPerson);
 })
 const PORT = 3001
 app.listen(PORT, () => {
