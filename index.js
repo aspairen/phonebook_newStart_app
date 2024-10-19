@@ -4,7 +4,7 @@ const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
-app.use(morgan('dev'));
+
 //Data
 let persons = [
   { 
@@ -28,20 +28,41 @@ let persons = [
     "number": "39-23-6423122"
   }
 ]
-//Routes
+
+// Custom token for logging request body
+morgan.token('body-data', (req, res) => {
+  if (req.method === 'POST') {
+    // Access the request body
+    const body = req.body;
+
+    if (body) {
+      return JSON.stringify(body);
+    } else {
+      return 'Empty body';
+    }
+  } else {
+    return '-'; // Indicate not a POST request
+  }
+
+})
+
+// Use morgan with custom format
+app.use(morgan(':method :url :status :res[content.length] - :response-time ms :body-data'));
+
+// Routes
 app.get('/', (request, response) => {
   response.send('<h1>Welcome to the Phonebook App</h1>')
 })
-//info route
+// info route
 app.get('/info', (req, res) => {
   res.send(`<p>Phonebook has info for 2 people</p><br><p>${Date()}</p>`)
 })
-//gets all persons
+// gets all persons
 app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
 
-///get a single person
+// get a single person
 app.get('/api/persons/:id', (request, response) => {
   const id = request.params.id
   const person = persons.find(person => person.id === id)
@@ -84,7 +105,7 @@ app.post('/api/persons', (request, response) => {
     return Math.random().toString(36).substring(2, 9);
 }
   const uniqueId = GenerateRandomId();
-  console.log(uniqueId);
+  
 
 
   const newPerson = { ...body, id: uniqueId }
@@ -93,7 +114,7 @@ app.post('/api/persons', (request, response) => {
   // Add new person to persons array
   persons = persons.concat(newPerson)
 
-  console.log(newPerson)
+  
   response.json(newPerson);
 })
 
