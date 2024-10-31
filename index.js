@@ -3,6 +3,10 @@ const morgan = require('morgan')
 
 const app = express()
 
+const cors = require('cors')
+
+app.use(cors())
+
 app.use(express.json())
 
 //Data
@@ -93,7 +97,7 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({
       error: 'number missing'
     })
-  };
+  }
 
   // Check for existing name
   const existingPerson = persons.find(person => person.name === body.name);
